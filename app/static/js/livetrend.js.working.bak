@@ -1,0 +1,605 @@
+const MAX_CHART_COUNT = 20;
+const SCREEN_WIDTH_RATIO = 0.94;
+const SCREEN_HEIGHT_RATIO = 0.9;
+const svgns = "http://www.w3.org/2000/svg";
+var settingsIcon = {
+  width: 500,
+  height: 600,
+  path: "M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336c44.2 0 80-35.8 80-80s-35.8-80-80-80s-80 35.8-80 80s35.8 80 80 80z",
+};
+
+for (let i = 1; i <= MAX_CHART_COUNT; i++) {
+  if (i == 1) {
+    jQuery("<div>", {
+      id: "canvasConatiner" + i,
+      class: "canvas-conatiner",
+      //title: "",
+    }).insertAfter("#topBtnGroup");
+  } else {
+    let prev = i - 1;
+    jQuery("<div>", {
+      id: "canvasConatiner" + i,
+      class: ["row", "canvas-conatiner"],
+      //title: "",
+    }).insertAfter("#canvas" + prev);
+  }
+
+  jQuery("<div>", {
+    id: "canvas" + i,
+    class: "plotly-canvas",
+    //title: "trend div",
+  }).appendTo("#canvasConatiner" + i);
+
+  if (i <= parseInt(MAX_CHART_COUNT / 2)) {
+    jQuery("<div>", {
+      id: "checkboxDiv" + i,
+    }).appendTo("#checkboxHolderRow1");
+  } else {
+    jQuery("<div>", {
+      id: "checkboxDiv" + i,
+    }).appendTo("#checkboxHolderRow2");
+  }
+
+  jQuery("<input>", {
+    id: "checkboxView" + i,
+    type: "checkbox",
+  }).appendTo("#checkboxDiv" + i);
+
+  try {
+    let html =
+      '<svg id="cbSvgBox' +
+      i +
+      '" width="40" height="16" style="margin: 5px"></svg>';
+    $("#checkboxDiv" + i).append(html);
+
+    $("#cbSvgBox" + i).attr({
+      width: 25,
+      height: 25,
+      viewBox: [0, 0, 40, 16].join(" "),
+      preserveAspectRatio: "xMidYMid meet",
+    });
+
+    $("#cbSvgBox" + i).css("margin", "0px");
+    var rect = document.createElementNS(svgns, "rect");
+    rect.setAttribute("x", 5);
+    rect.setAttribute("y", -10);
+    rect.setAttribute("rx", 13);
+    rect.setAttribute("ry", 13);
+    rect.setAttribute("width", 25);
+    rect.setAttribute("height", 25);
+    rect.setAttribute("fill", "red");
+    $("#cbSvgBox" + i)[0].appendChild(rect);
+  } catch (error) {
+    console.error(error);
+  }
+
+  jQuery("<label>", {
+    id: "cbLabel" + i,
+  }).appendTo("#checkboxDiv" + i);
+
+  $("#cbLabel" + i).attr("for", "checkboxView" + i);
+}
+
+$(document).ready(function () {
+  // const
+  //const MAX_CHART_COUNT = 12;
+  var eventSource;
+  var context = [];
+  var compOptions = [];
+  var compConfig = [];
+  var viewIndex = 0;
+  var trendPaused = false;
+  var duration = 0;
+  const lineChart = [];
+  const colorSet = [
+    "#00580b",
+    "#9127ef",
+    "#74f62e",
+    "#001fbb",
+    "#00d000",
+    "#a100c3",
+    "#00bf00",
+    "#cc1fd1",
+    "#87db00",
+    "#6953f5",
+    "#02ce4b",
+    "#e03cd8",
+    "#d9ff5f",
+    "#853acc",
+    "#ffce27",
+    "#5052d5",
+    "#d0c74a",
+    "#8b00a6",
+    "#00cb84",
+    "#ff004a",
+    "#00efd7",
+    "#f5004a",
+    "#00e2e1",
+    "#b90000",
+    "#61fcff",
+    "#ff2969",
+    "#00caa4",
+    "#3b006b",
+    "#ffee85",
+    "#003eab",
+    "#ff7900",
+    "#007eff",
+    "#197700",
+    "#0084ff",
+    "#246b00",
+    "#0042ae",
+    "#ccaf49",
+    "#001d73",
+    "#cdc669",
+    "#0077e8",
+    "#ac3000",
+    "#0094ff",
+    "#9d0000",
+    "#00ddff",
+    "#6b0000",
+    "#00daff",
+    "#ff635d",
+    "#00d9ff",
+    "#af0048",
+    "#00d3d2",
+    "#7e0071",
+    "#005700",
+    "#ffa2ff",
+    "#445900",
+    "#0084f1",
+    "#d48839",
+    "#005db8",
+    "#6f4500",
+    "#00c1ff",
+    "#781711",
+    "#00d6ff",
+    "#7c001e",
+    "#61cefd",
+    "#4e0000",
+    "#e2fbd5",
+    "#540058",
+    "#007e51",
+    "#82499f",
+    "#00693a",
+    "#ffc1ff",
+    "#002700",
+    "#7da7ff",
+    "#6e5d13",
+    "#003b8e",
+    "#d7a477",
+    "#00246c",
+    "#ffb7b0",
+    "#001600",
+    "#c9c3ff",
+    "#1e3500",
+    "#004f98",
+    "#ae3731",
+    "#007dbf",
+    "#88272b",
+    "#006f6b",
+    "#2c0035",
+    "#e2d1cd",
+    "#430000",
+    "#1f4718",
+    "#cd7386",
+    "#002a0b",
+    "#b37580",
+    "#00230b",
+    "#a07185",
+    "#002b24",
+    "#677757",
+    "#002533",
+    "#2e250f",
+    "#002a31",
+    "#002725",
+  ];
+
+  for (let i = 1; i <= MAX_CHART_COUNT; i++) {
+    context[i - 1] = $("#canvas" + i)[0];
+  }
+
+  for (let i = 1; i <= MAX_CHART_COUNT; i++) {
+    $("#checkboxView" + i).change(() => {
+      if ($("#checkboxView" + i).prop("checked")) $("#canvas" + i).show();
+      else {
+        $("#canvas" + i).hide();
+      }
+      if (compConfig.length >= i) {
+        compConfig[i - 1].show = $("#checkboxView" + i).prop("checked");
+      } else {
+        compConfig.push({ signalName: "Dummy", show: true });
+      }
+      localStorage.setItem("SignalConfig", JSON.stringify(compConfig));
+      cleanupTrends();
+      initTrendSettings();
+    });
+
+    context[i - 1] != null
+      ? context[i - 1].addEventListener("dblclick", function () {
+          // Some dazzling stuff happens be here
+          viewIndex = i;
+          $("#viewIndexSelected").text("for : View" + viewIndex);
+          let modalComponents = $("#modal_components")[0];
+          for (let comp = 0; comp < modalComponents.options.length; comp++) {
+            if (
+              modalComponents.options[comp].text ===
+              compConfig[i - 1].signalName
+            ) {
+              modalComponents.value = compConfig[i - 1].signalName;
+            } else if (compConfig[i - 1].signalName === "Dummy") {
+              modalComponents.value = compConfig[i - 1].signalName;
+            }
+          }
+          $("#configModal").modal();
+        })
+      : null;
+  }
+
+  loadModalData = () => {
+    if (viewIndex > 0) {
+      $("#modal_show").prop("checked", compConfig[viewIndex - 1].show);
+    }
+  }; //loadModalData
+
+  saveTrendConfig = () => {
+    if (localStorage.getItem("SignalConfig") != null) {
+      compConfig[viewIndex - 1].signalName = $("#modal_components").val();
+      compConfig[viewIndex - 1].show = $("#modal_show").prop("checked");
+      localStorage.setItem("SignalConfig", JSON.stringify(compConfig));
+      initTrendSettings();
+    }
+  }; //saveTrendConfig
+
+  saveTrendDuration = (btnId) => {
+    duration = parseInt($("#" + btnId).val());
+    $(".btn-duration").removeClass("btn-success");
+    $(".btn-duration").each((index, item) => {
+      if ($(item).val() == duration) $(item).addClass("btn-success");
+    });
+    localStorage.setItem("Duration", duration);
+    cleanupTrends();
+    closeEvent();
+    getRealtimeTrendData();
+  }; //saveTrendDuration
+
+  intiDbCall = () => {
+    //const source = new EventSource("/query-database");
+    $.ajax({
+      type: "GET",
+      url: "/query-database",
+    });
+  }; //intiDbCall
+
+  initTrendSettings = () => {
+    if (localStorage.getItem("Duration") != null) {
+      duration = parseInt(localStorage.getItem("Duration"));
+    } else {
+      duration = parseInt($("#btnDur30").val());
+      localStorage.setItem("Duration", duration);
+    }
+
+    $(".btn-duration").each((index, item) => {
+      if ($(item).val() == duration) $(item).addClass("btn-success");
+    });
+
+    if (localStorage.getItem("SignalConfig") != null) {
+      compConfig = JSON.parse(localStorage.getItem("SignalConfig"));
+    } else {
+      $.ajax({
+        type: "GET",
+        url: "/signal-config",
+      }).done(function (data) {
+        localStorage.setItem("SignalConfig", data);
+        compConfig = JSON.parse(data);
+      });
+    }
+    var visibleTrendTotal = 0;
+    var visibleTrendLoop = 0;
+    compConfig.forEach((item) => {
+      if (item.show) visibleTrendTotal++;
+    });
+    console.log("visibleTrendTotal: " + visibleTrendTotal);
+
+    compConfig.forEach((item, index) => {
+      viewNum = index + 1;
+
+      $("label[for='checkboxView" + viewNum + "']").text(item.signalName);
+      $("#checkboxView" + viewNum).prop("checked", item.show);
+      $("#cbSvgBox" + viewNum + " rect").css("fill", colorSet[index]);
+
+      if (item.show) $("#canvas" + viewNum).show();
+      else $("#canvas" + viewNum).hide();
+
+      if (item.show) visibleTrendLoop++;
+
+      // lineChart[index] = new Chart(context[index], config);
+
+      let layout = getNewLayout();
+      layout.yaxis.title.text = item.signalName;
+      // layout.xaxis.title = "time";
+      let data = getNewData();
+      data.line.color = colorSet[index];
+      Plotly.newPlot("canvas" + (index + 1), [data], layout, getNewConfig());
+    });
+    if (compConfig.length < MAX_CHART_COUNT) {
+      for (let i = compConfig.length + 1; i <= MAX_CHART_COUNT; i++) {
+        $("label[for='checkboxView" + i + "']").text("Dummy");
+        $("#cbSvgBox" + i + " rect").css("fill", colorSet[i - 1]);
+        $("#checkboxView" + i).prop("checked", false);
+        $("#canvas" + i).hide();
+      }
+    }
+
+    if (localStorage.getItem("SignalOptions") != null) {
+      let options = JSON.parse(localStorage.getItem("SignalOptions"));
+      let optionList = document.getElementById("modal_components").options;
+      options.forEach((option) => optionList.add(new Option(option)));
+    } else {
+      $.ajax({
+        type: "GET",
+        url: "/signal-options",
+      }).done(function (data) {
+        //console.log(data);
+        //console.log(JSON.parse(data));
+        localStorage.setItem("SignalOptions", data);
+        let optionList = document.getElementById("modal_components").options;
+        JSON.parse(data).forEach((option) =>
+          optionList.add(new Option(option))
+        );
+      });
+    }
+    // resize checkbox_holder
+    $("#checkbox_holder").width(window.innerWidth * SCREEN_WIDTH_RATIO);
+  }; //initTrendSettings
+
+  cleanupTrends = () => {
+    lineChart.forEach((item) => {
+      item.destroy();
+    });
+  }; //cleanupTrends
+
+  createEvent = () => {
+    let clientid = +new Date();
+    eventSource = new EventSource(
+      "/trend-data?duration=" + duration + "&clientid=" + clientid
+    );
+    console.log("Creatting EventSource: " + eventSource.url);
+    eventSource.onopen = (event) => {};
+    eventSource.onerror = (err) => {
+      //console.log("time out: ", new Date());
+    };
+    eventSource.onmessage = (event) => {
+      //console.log(new Date());
+      if (!trendPaused) {
+        let index;
+        let parsedData = JSON.parse(event.data);
+        let filteredData = {};
+        var update = {};
+        var myPlot = "";
+        let dtStart = new Date(new Date().getTime() - duration * 1000);
+        for (let prop in parsedData) {
+          filteredData[prop] = [];
+        }
+        if (parsedData.hasOwnProperty("time")) {
+          for (index = parsedData.time.length - 1; index >= 0; index--) {
+            if (new Date(parsedData.time[index]) < dtStart) {
+              break;
+            }
+            for (let prop in parsedData) {
+              if (prop == "time")
+                filteredData[prop].push(parsedData[prop][index].slice(11));
+              // filteredData[prop].push(
+              //   new Date(parsedData[prop][index]).toLocaleTimeString("it-IT")
+              // );
+              else filteredData[prop].push(parsedData[prop][index]);
+            }
+          }
+          for (let prop in filteredData) {
+            filteredData[prop] = filteredData[prop].reverse();
+          }
+        }
+
+        filteredData.time = filteredData.time.map((item) => {
+          return "2023-01-27 " + item;
+        });
+        compConfig.forEach((item, index) => {
+          if (filteredData.hasOwnProperty(item.signalName)) {
+            myPlot = document.getElementById("canvas" + (index + 1));
+            y = [filteredData[item.signalName]];
+            x = [filteredData.time];
+            let min = Math.min(...filteredData[item.signalName]),
+              max = Math.max(...filteredData[item.signalName]);
+            if (max - min < 1) {
+              myPlot.layout.yaxis.tickformat = ".3f";
+            } else if (max - min < 5) {
+              myPlot.layout.yaxis.tickformat = ".2f";
+            } else if (max - min < 10) {
+              myPlot.layout.yaxis.tickformat = ".1f";
+            } else {
+              myPlot.layout.yaxis.tickformat = ".0f";
+            }
+            update = { x: x, y: y };
+            Plotly.update(myPlot, update, {}, [0]);
+          }
+        });
+      }
+    };
+  }; //createEvent
+
+  closeEvent = () => {
+    if (eventSource) {
+      console.log(eventSource);
+      console.log("Closing EventSource: " + eventSource.url);
+      eventSource.close();
+      eventSource = null;
+      console.log(eventSource);
+    }
+  }; //closeEvent
+
+  getRealtimeTrendData = () => {
+    intiDbCall();
+    initTrendSettings();
+    createEvent();
+  }; //getRealtimeTrendData
+
+  pauseTrendToggle = () => {
+    trendPaused = !trendPaused;
+    if (trendPaused) {
+      $("#btnPause").removeClass("btn-primary");
+      $("#btnPause").addClass("btn-danger");
+      $("#btnPause").text("Resume");
+    } else {
+      $("#btnPause").removeClass("btn-danger");
+      $("#btnPause").addClass("btn-primary");
+      $("#btnPause").text("Pause");
+    }
+  }; //pauseTrendToggle
+
+  fitAllTrends = () => {
+    let windowHeight = window.innerHeight;
+    var visibleTrendTotal = 0;
+    var graph = null;
+    compConfig.forEach((item, index) => {
+      if (item.show) visibleTrendTotal++;
+    });
+    let footer = $("#checkbox_holder").is(":visible")
+      ? $("#checkbox_holder").height()
+      : 0;
+    let trendNavbar = $("#trendNavbar").height();
+    let topBtnGroup = $("#topBtnGroup").height();
+    let totalTrendHeight = windowHeight - trendNavbar - topBtnGroup - footer;
+    let layout_height =
+      (totalTrendHeight * SCREEN_HEIGHT_RATIO * (footer == 0 ? 1.02 : 1)) /
+      visibleTrendTotal;
+    compConfig.forEach((item, index) => {
+      graph = document.getElementById("canvas" + (index + 1));
+      graph.layout.height = layout_height;
+      graph.layout.width = window.innerWidth * SCREEN_WIDTH_RATIO;
+      Plotly.redraw(graph);
+    });
+  };
+
+  getNewData = () => {
+    var config = {
+      mode: "lines",
+      name: "",
+      x: [""],
+      y: [""],
+      hovertemplate:
+        //"%{yaxis.title.text}: %{y:.0f}<br>" +
+        //"%{xaxis.title.text}: %{x|%Y-%m-%d %H:%M:%S}<br>",
+        "<b>%{yaxis.title.text}</b>: %{y:.0f}<br>" +
+        "%{x|%Y-%m-%d %H:%M:%S}<br>",
+      line: { color: "#17BECF", shape: "spline", smoothing: 0.9 },
+    };
+    return config;
+  }; //getNewData
+
+  getNewConfig = () => {
+    var config = {
+      responsive: true,
+      displaylogo: false,
+      modeBarButtonsToAdd: [
+        {
+          name: "Signal Configure",
+          icon: settingsIcon,
+          click: function (gd) {
+            console.log(gd.id);
+            viewIndex = parseInt(gd.id.replace("canvas", ""));
+            $("#viewIndexSelected").text("for : View" + viewIndex);
+            let modalComponents = $("#modal_components")[0];
+            for (let comp = 0; comp < modalComponents.options.length; comp++) {
+              if (
+                modalComponents.options[comp].text ===
+                compConfig[viewIndex - 1].signalName
+              ) {
+                modalComponents.value = compConfig[viewIndex - 1].signalName;
+              } else if (compConfig[viewIndex - 1].signalName === "Dummy") {
+                modalComponents.value = compConfig[viewIndex - 1].signalName;
+              }
+            }
+            $("#configModal").modal();
+          },
+        },
+      ],
+      modeBarButtonsToRemove: [
+        "zoom2d",
+        "pan2d",
+        "select2d",
+        "lasso2d",
+        "zoomIn2d",
+        "zoomOut2d",
+        "autoScale2d",
+        //"resetScale2d",
+        "sendDataToCloud",
+      ],
+    };
+    return config;
+  }; //getNewConfig
+
+  getNewLayout = () => {
+    let layout = {
+      title: "",
+      width: window.innerWidth * SCREEN_WIDTH_RATIO,
+      height: 300,
+      margin: {
+        l: 80,
+        r: 20,
+        b: 50,
+        t: 20,
+        pad: 0,
+      },
+      xaxis: {
+        title: "",
+        tickfont: {
+          family: "Courier New, monospace",
+          size: 12,
+          color: "#7f7f7f",
+        },
+        showgrid: true,
+        showline: true,
+        zeroline: false,
+        showspikes: true,
+        spikemode: "across",
+      },
+      yaxis: {
+        title: {
+          text: "",
+          font: {
+            family: "Arial Black",
+            size: 12,
+            color: "#7f7f7f",
+          },
+        },
+        tickfont: {
+          family: "Courier New, monospace",
+          size: 12,
+          color: "#7f7f7f",
+        },
+        showline: true,
+        showgrid: true,
+        zeroline: false,
+        tickformat: ".2f",
+      },
+    };
+    return layout;
+  }; //getNewLayout
+
+  createTable = (tableData) => {
+    var table = $("#configTable")[0];
+    var tableBody = document.createElement("tbody");
+
+    tableData.forEach(function (rowData) {
+      var row = document.createElement("tr");
+
+      rowData.forEach(function (cellData) {
+        var cell = document.createElement("td");
+        cell.appendChild(document.createTextNode(cellData));
+        row.appendChild(cell);
+      });
+
+      tableBody.appendChild(row);
+    });
+    table.appendChild(tableBody);
+  };
+});

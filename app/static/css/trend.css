@@ -1,0 +1,204 @@
+.c-app {
+  background: #efe9e9;
+}
+
+.trend_canvas {
+  margin: 0.1em;
+  border: 1px solid #000000;
+  border-radius: 0.2em;
+}
+
+.active {
+  color: green !important;
+}
+
+#coilSelected {
+  height: 1.5em;
+  width: 8em;
+  margin-left: 0.5em;
+}
+
+#loadCoilTrend {
+  height: 1.8em;
+  margin-left: 2em;
+}
+
+#btnAutoScaleAll {
+  height: 1.8em;
+  margin-left: 2em;
+}
+
+#startDatetime {
+  height: 1.5em;
+  width: 14em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+#endDatetime {
+  height: 1.5em;
+  width: 14em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+#loadHistoryTrend {
+  height: 1.8em;
+  margin-left: 0.5em;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+}
+
+.plotly-canvas {
+  width: fit-content;
+  border: 1px solid #000000;
+  border-radius: 0.2em;
+  margin-top: 0.3em;
+  /* float: right; */
+}
+
+.canvas-conatiner {
+  /* width: 2000px; */
+  border: none;
+  /* display: inline; */
+}
+
+/* .canvas-btn {
+  width: 1em;
+  height: 1em;
+  border: none;
+  float: left;
+} */
+
+#checkbox_holder {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  margin-top: 0.2em;
+  /* margin-bottom: 0.2em; */
+  margin-left: 1em;
+}
+
+#checkbox_holder_toggle {
+  position: fixed;
+  right: 8;
+  bottom: 50;
+  /* border: 0.1em solid green;
+  border-radius: 0.2em;
+  background: green; */
+  color: white;
+  margin-left: 50px;
+  width: 4em;
+}
+
+#goto_top {
+  position: fixed;
+  right: 8;
+  bottom: 95;
+  font-weight: bolder;
+  color: white;
+  margin-left: 50px;
+  width: 4em;
+}
+
+#goto_bottom {
+  position: fixed;
+  right: 8;
+  bottom: 5;
+  font-weight: bolder;
+  color: white;
+  margin-left: 50px;
+  width: 4em;
+}
+
+#configTable {
+  width: 100%;
+  border: 1px solid white;
+  border-collapse: collapse;
+  font-family: "Courier New", Courier, monospace;
+  text-align: center;
+}
+
+#configTable th {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+#configTable td {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+
+#configTable th {
+  background-color: #f3faec;
+}
+#configTable td {
+  background-color: #f3faec;
+}
+
+.removeBtn {
+  background: url("/static/images/btn-blue.png") no-repeat;
+  height: 30px;
+  width: 35px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+}
+
+.colorBtn {
+  height: 30px;
+  width: 70px;
+  border: none;
+  border-radius: 4px;
+}
+
+#modal_components {
+  height: 2em;
+  border-radius: 0.2em;
+}
+
+#modal_show {
+  height: 2em;
+  width: 2em;
+}
+
+button > svg {
+  width: 2em;
+  height: 1em;
+}
+
+button > svg > path {
+  fill: white;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #canvasConatiner1,
+  #canvasConatiner1 * {
+    visibility: visible;
+  }
+  #canvasConatiner1 {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}

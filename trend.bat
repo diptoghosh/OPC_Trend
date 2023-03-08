@@ -1,0 +1,23 @@
+pyinstaller --onefile --noconfirm  ^
+	--icon=".\sms-logo-transparent.ico"  ^
+	--exclude-module anyio ^
+	--exclude-module asyncua ^
+	--exclude-module opcua ^
+	--exclude-module opcua-client ^
+	--exclude-module opcua-widgets ^
+	--exclude-module lxml ^
+	--exclude-module pip-tools ^
+	--exclude-module pytz ^
+	--exclude-module pytz-deprecation-shim ^
+	--exclude-module tkinter ^
+	--exclude-module beautifulsoup4 ^
+	--exclude-module pandas ^
+	--exclude-module numpy ^
+	--exclude-module altgraph ^
+	--exclude-module xmltodict ^
+	--add-data=".\config.py";"." ^
+	--add-data=".\app\templates;templates"  ^
+	--add-data=".\app\static;static"  ^
+	--version-file .\version.rc ^
+	--name=CTCM-OPC-Trend .\trend.py
+

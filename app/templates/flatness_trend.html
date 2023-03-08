@@ -1,0 +1,60 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container float-left">
+  <div class="container float-left">
+    <div class="row" style="margin: 0.5em">
+      <label for="startDatetime">Select Start Datetime:</label>
+      <input
+        type="datetime-local"
+        id="startDatetime"
+        name="startDatetime"
+        value="{{start_date}}"
+        step="60"
+      />
+      <label for="endDatetime">Select End Datetime:</label>
+      <input
+        type="datetime-local"
+        id="endDatetime"
+        name="endDatetime"
+        value="{{end_date}}"
+        step="60"
+      />
+      <button class="btn btn-sm btn-primary" id="loadHistoryTrend">Load</button>
+    </div>
+    <div id="canvas1" class="plotly-canvas"></div>
+    <div id="canvas2" class="plotly-canvas"></div>
+    <div id="canvas3" class="plotly-canvas"></div>
+    <div id="canvas4" class="plotly-canvas"></div>
+    <div id="canvas5" class="plotly-canvas"></div>
+    <div id="canvas6" class="plotly-canvas"></div>
+    <div id="canvas7" class="plotly-canvas"></div>
+    <div id="canvas8" class="plotly-canvas"></div>
+    <div id="canvas9" class="plotly-canvas"></div>
+    <div id="canvas10" class="plotly-canvas"></div>
+    <div id="canvas11" class="plotly-canvas"></div>
+    <div id="canvas12" class="plotly-canvas"></div>
+    {% include 'trend_checkbox.html' %}
+  </div>
+  {% endblock content %} {% include 'config_modal.html' %} {% block javascripts
+  %}
+  <script src="/static/js/plotly-2.16.3.min.js"></script>
+  <script src="/static/js/flatnesstrend.js"></script>
+  <script>
+    $(document).ready(function () {
+      //establish connection
+      getHistoryTrendData();
+
+      $("#loadHistoryTrend").click(function () {
+        loadHistoryData();
+      });
+
+      $("#configModal").on("show.bs.modal", function (event) {
+        console.log("config modal opened");
+        loadModalData();
+      });
+      $("#btnSaveConfig").click(function () {
+        saveTrendConfig();
+      });
+    });
+  </script>
+  {% endblock javascripts%}
+</div>

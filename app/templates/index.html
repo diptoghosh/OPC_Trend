@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block head %}
+
+<style>
+  body,
+  html {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    height: 100%;
+    margin: 0;
+
+    /* The image used */
+    background-image: url("/static/images/background_image.png");
+
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+</style>
+
+{% endblock head %} {% block content %} {% endblock content %} {% block
+javascripts %}
+<script src="/static/js/livetrend.js"></script>
+<script>
+  $(document).ready(function () {
+    intiDbCall();
+  });
+</script>
+{% endblock javascripts%}

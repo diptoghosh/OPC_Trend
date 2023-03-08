@@ -1,0 +1,65 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container float-left">
+  <div class="row" style="margin: 0.5em">
+    <div
+      class="btn-toolbar"
+      role="toolbar"
+      aria-label="Toolbar with button groups"
+    >
+      <button id="btnDur30" type="button" class="btn btn-duration" value="30">
+        30 Sec
+      </button>
+      <button id="btnDur60" type="button" class="btn btn-duration" value="60">
+        1 min
+      </button>
+      <button id="btnDur180" type="button" class="btn btn-duration" value="180">
+        3 min
+      </button>
+      <button id="btnDur300" type="button" class="btn btn-duration" value="300">
+        5 min
+      </button>
+      <button id="btnDur600" type="button" class="btn btn-duration" value="600">
+        10 min
+      </button>
+    </div>
+    <button
+      id="btnPause"
+      type="button"
+      class="btn btn-primary"
+      style="margin-left: 20px"
+    >
+      Pause
+    </button>
+  </div>
+  {% include 'trend_canvas.html' %} {% include 'trend_checkbox.html' %}
+</div>
+{% endblock %} {% include 'config_modal.html' %} {% block javascripts %}
+
+<!-- livechart -->
+<script src="/static/js/livetrend.js"></script>
+
+<!-- Call the custom JS for this page when page is completely loaded-->
+<script>
+  $(document).ready(function () {
+    $("#realtime-trend").addClass("active");
+
+    //establish connection
+    getRealtimeTrendData();
+
+    $("#configModal").on("show.bs.modal", function (event) {
+      console.log("config modal opened");
+      loadModalData();
+    });
+    $("#btnSaveConfig").click(function () {
+      saveTrendConfig();
+    });
+    $(".btn-duration").click(function () {
+      saveTrendDuration($(this).attr("id"));
+    });
+    $("#btnPause").click(function () {
+      pauseTrendToggle();
+    });
+  });
+</script>
+
+{% endblock javascripts%}

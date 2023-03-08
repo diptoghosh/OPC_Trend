@@ -1,0 +1,203 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container float-left">
+  <div id="topBtnGroup" class="row" style="margin: 0.5em">
+    <div
+      class="btn-toolbar"
+      role="toolbar"
+      aria-label="Toolbar with button groups"
+    >
+      <button id="btnDur30" type="button" class="btn btn-duration" value="30">
+        30 Sec
+      </button>
+      <button id="btnDur60" type="button" class="btn btn-duration" value="60">
+        1 min
+      </button>
+      <button id="btnDur180" type="button" class="btn btn-duration" value="180">
+        3 min
+      </button>
+      <button id="btnDur300" type="button" class="btn btn-duration" value="300">
+        5 min
+      </button>
+      <button id="btnDur600" type="button" class="btn btn-duration" value="600">
+        10 min
+      </button>
+    </div>
+    <button
+      id="btnPause"
+      type="button"
+      class="btn btn-primary"
+      style="margin-left: 20px"
+    >
+      <svg
+        id="svgPause"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 320 512"
+      >
+        <!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+        <path
+          d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"
+        />
+      </svg>
+      <svg
+        id="svgPlay"
+        style="display: none"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 384 512"
+      >
+        <!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+        <path
+          d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"
+        />
+      </svg>
+    </button>
+    <button
+      id="fitTrends"
+      type="button"
+      class="btn btn-primary"
+      style="margin-left: 1em"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
+        <!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+        <path
+          d="M150.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L96 109.3V402.7L54.6 361.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0l96-96c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 402.7V109.3l41.4 41.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-96-96z"
+        />
+      </svg>
+    </button>
+    <button
+      id="fullScreenBtn"
+      type="button"
+      class="btn btn-primary"
+      style="margin-left: 1em"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+        <path
+          d="M278.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-64 64c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l9.4-9.4V224H109.3l9.4-9.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-64 64c-12.5 12.5-12.5 32.8 0 45.3l64 64c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-9.4-9.4H224V402.7l-9.4-9.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l64 64c12.5 12.5 32.8 12.5 45.3 0l64-64c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-9.4 9.4V288H402.7l-9.4 9.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l64-64c12.5-12.5 12.5-32.8 0-45.3l-64-64c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l9.4 9.4H288V109.3l9.4 9.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-64-64z"
+        />
+      </svg>
+    </button>
+    <button
+      id="printChart"
+      type="button"
+      class="btn btn-primary"
+      style="margin-left: 1em"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+        <path
+          d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zM432 248a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"
+        />
+      </svg>
+    </button>
+    <button
+      id="addChart"
+      type="button"
+      class="btn btn-primary"
+      style="margin-left: 1em"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+        <path
+          d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z"
+        />
+      </svg>
+    </button>
+    <button id="checkbox_holder_toggle" class="btn btn-primary">Hide</button>
+    <a id="goto_top" type="button" class="btn btn-primary" href="#trendNavbar"
+      >&#10506;</a
+    >
+    <a id="goto_bottom" type="button" class="btn btn-primary" href="#pageBottom"
+      >&#10507;</a
+    >
+  </div>
+  <div id="pageBottom"></div>
+  <div id="checkbox_holder" class="card">
+    <div class="card-header">Trend Selection</div>
+    <div class="card-body">
+      <div id="checkboxHolderRow1" class="row justify-content-around"></div>
+      <div id="checkboxHolderRow2" class="row justify-content-around"></div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% include 'config_modal.html' %} {% block javascripts %}
+<!-- plotly -->
+<script src="/static/js/plotly-2.16.3.min.js"></script>
+<!-- livechart -->
+<script src="/static/js/livetrend.js"></script>
+
+<!-- Call the custom JS for this page when page is completely loaded-->
+<script>
+  $(document).ready(function () {
+    $("#realtime-trend").addClass("active");
+
+    //establish connection
+    getRealtimeTrendData();
+
+    $("#configModal").on("show.bs.modal", function (event) {
+      console.log("config modal opened");
+      loadModalData();
+    });
+
+    $("#btnSaveConfig").click(function () {
+      saveTrendConfig();
+    });
+
+    $("#btnAddConfig").click(function () {
+      AddToTrendConfig();
+    });
+
+    $(".btn-duration").click(function () {
+      saveTrendDuration($(this).attr("id"));
+    });
+
+    $("#btnPause").click(function () {
+      pauseTrendToggle();
+    });
+
+    $("#printChart").click(function () {
+      window.print();
+    });
+
+    $("#fitTrends").click(function () {
+      fitAllTrends();
+    });
+    $("#fullScreenBtn").click(function () {
+      if (
+        (document.fullScreenElement && document.fullScreenElement !== null) ||
+        (!document.mozFullScreen && !document.webkitIsFullScreen)
+      ) {
+        if (document.documentElement.requestFullScreen) {
+          document.documentElement.requestFullScreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullScreen) {
+          document.documentElement.webkitRequestFullScreen(
+            Element.ALLOW_KEYBOARD_INPUT
+          );
+        }
+      } else {
+        if (document.cancelFullScreen) {
+          document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        }
+      }
+    });
+    $("#checkbox_holder_toggle").click(function () {
+      if ($("#checkbox_holder").is(":visible")) {
+        $("#checkbox_holder_toggle").removeClass("btn-primary");
+        $("#checkbox_holder_toggle").addClass("btn-danger");
+        $("#checkbox_holder_toggle").text("Show");
+      } else {
+        $("#checkbox_holder_toggle").removeClass("btn-danger");
+        $("#checkbox_holder_toggle").addClass("btn-primary");
+        $("#checkbox_holder_toggle").text("Hide");
+      }
+      $("#checkbox_holder").toggle(100);
+    });
+  });
+</script>
+
+{% endblock javascripts%}

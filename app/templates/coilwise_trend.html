@@ -1,0 +1,48 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container float-left">
+  <div class="row" style="margin: 0.5em">
+    <label for="coilSelected">Select Coil: </label>
+    <select name="coilSelected" id="coilSelected"></select>
+    <button class="btn btn-sm btn-primary" id="loadCoilTrend">Load</button>
+    <button class="btn btn-sm btn-secondary" id="btnAutoScaleAll">
+      Auto Scale
+    </button>
+  </div>
+  {% include 'trend_canvas.html' %} {% include 'trend_checkbox.html' %}
+</div>
+{% endblock content%} {% include 'config_modal.html' %} {% block javascripts %}
+
+<!-- livechart -->
+<script src="/static/js/coiltrend.js"></script>
+
+<!-- Call the custom JS for this page when page is completely loaded-->
+<script>
+  $(document).ready(function () {
+    $("#coilwise-trend").addClass("active");
+
+    // load coil options
+    loadCoilOptions();
+
+    // establish connection
+    getCoilTrendData();
+
+    $("#configModal").on("show.bs.modal", function (event) {
+      console.log("config modal opened");
+      loadModalData();
+    });
+
+    $("#btnSaveConfig").click(function () {
+      saveTrendConfig();
+    });
+
+    $("#btnAutoScaleAll").click(function () {
+      autoScaleAll();
+    });
+
+    $("#loadCoilTrend").click(function () {
+      loadTrendData();
+    });
+  });
+</script>
+
+{% endblock javascripts%}

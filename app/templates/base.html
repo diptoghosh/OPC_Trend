@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <meta name="description" content="Realtime Trend" />
+    <title>{% block title %}{{pagetitle}}{% endblock %} | TMI</title>
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Icons-->
+    <link href="/static/css/fontawesome.min.css" rel="stylesheet" />
+
+    <!-- Main styles for this application-->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Custom Styles-->
+    <link href="/static/css/trend.css" rel="stylesheet" />
+
+    <!-- Specific Page CSS goes HERE  -->
+    {% block stylesheets %}{% endblock stylesheets %} {% block head %}{%
+    endblock %}
+  </head>
+  <body class="c-app">
+    <div class="c-wrapper">
+      {% include 'base_template/navigation.html' %}
+
+      <div class="c-body">
+        <main class="c-main">{% block content %}{% endblock content %}</main>
+      </div>
+
+      {% include 'base_template/footer.html' %}
+    </div>
+
+    {% include 'base_template/scripts.html' %}
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}{% endblock javascripts %}
+  </body>
+</html>

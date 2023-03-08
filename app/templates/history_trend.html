@@ -1,0 +1,53 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container float-left">
+  <div class="row" style="margin: 0.5em">
+    <label for="startDatetime">Select Start Datetime:</label>
+    <input
+      type="datetime-local"
+      id="startDatetime"
+      name="startDatetime"
+      value="{{start_date}}"
+      step="60"
+    />
+    <label for="endDatetime">Select End Datetime:</label>
+    <input
+      type="datetime-local"
+      id="endDatetime"
+      name="endDatetime"
+      value="{{end_date}}"
+      step="60"
+    />
+    <button class="btn btn-sm btn-primary" id="loadHistoryTrend">Load</button>
+  </div>
+  {% include 'trend_canvas.html' %} {% include 'trend_checkbox.html' %}
+</div>
+
+{% endblock content %} {% include 'config_modal.html' %} {% block javascripts %}
+
+<!-- livechart -->
+<script src="/static/js/historytrend.js"></script>
+
+<!-- Call the custom JS for this page when page is completely loaded-->
+<script>
+  $(document).ready(function () {
+    $("#history-trend").addClass("active");
+
+    //establish connection
+    getHistoryTrendData();
+
+    $("#loadHistoryTrend").click(function () {
+      loadHistoryData();
+    });
+
+    $("#configModal").on("show.bs.modal", function (event) {
+      console.log("config modal opened");
+      loadModalData();
+    });
+    $("#btnSaveConfig").click(function () {
+      saveTrendConfig();
+    });
+  });
+</script>
+
+{% endblock javascripts%}
